@@ -3,6 +3,7 @@ import binascii
 import codecs
 import urllib.parse
 import zlib
+import hashlib
 
 
 def base64_encode(s: str) -> str:
@@ -86,6 +87,9 @@ def morse_encode(s: str) -> str:
     encoded = [MORSE_CODE_DICT.get(ch, '') for ch in s]
     return ' '.join(encoded)
 
+def md5_hash(s: str) -> str:
+    return hashlib.md5(s.encode()).hexdigest()
+
 ENCODERS = {
     "base64": base64_encode,
     "base32": base32_encode,
@@ -96,4 +100,5 @@ ENCODERS = {
     "rot47": rot47_encode,
     "gzip64": gzip64_encode,
     "morse": morse_encode,
+    "md5": md5_hash,
 }
