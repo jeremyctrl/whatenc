@@ -1,0 +1,16 @@
+[project]
+name = "whatenc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.3.0",
+    "twine>=6.2.0",
+]
+
+[project.scripts]
+whatenc = "whatenc.cli:main"
