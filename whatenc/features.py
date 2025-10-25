@@ -53,7 +53,7 @@ def stopword_ratio(s: str) -> float:
 
 def extract_features(s: str) -> np.ndarray:
     if not s:
-        return np.zeros(8, dtype=float)
+        return np.zeros(10, dtype=float)
 
     n = len(s)
     printable = set(string.printable)
