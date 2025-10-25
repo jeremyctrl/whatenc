@@ -99,6 +99,9 @@ def sha224_hash(s: str) -> str:
 def sha256_hash(s: str) -> str:
     return hashlib.sha256(s.encode()).hexdigest()
 
+def sha384_hash(s: str) -> str:
+    return hashlib.sha384(s.encode()).hexdigest()
+
 ENCODERS = {
     "base64": base64_encode,
     "base32": base32_encode,
@@ -112,5 +115,6 @@ ENCODERS = {
     "md5": md5_hash,
     "sha1": sha1_hash,
     "sha224": sha224_hash,
-    "sha256": sha256_hash
+    "sha256": sha256_hash,
+    "sha384": sha384_hash,
 }
