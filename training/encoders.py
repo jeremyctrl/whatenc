@@ -4,6 +4,7 @@ import codecs
 import urllib.parse
 import zlib
 
+
 def base64_encode(s: str) -> str:
     try:
         return base64.b64encode(s.encode()).decode()
@@ -54,6 +55,25 @@ def gzip64_encode(s: str) -> str:
         return ""
 
 
+MORSE_CODE_DICT = {
+    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..",
+    "E": ".", "F": "..-.", "G": "--.", "H": "....",
+    "I": "..", "J": ".---", "K": "-.-", "L": ".-..",
+    "M": "--", "N": "-.", "O": "---", "P": ".--.",
+    "Q": "--.-", "R": ".-.", "S": "...", "T": "-", "U": "..-", "V": "...-",
+    "W": ".--", "X": "-..-", "Y": "-.--", "Z": "--..",
+    "1": ".----", "2": "..---", "3": "...--", "4": "....-",
+    "5": ".....", "6": "-....", "7": "--...", "8": "---..",
+    "9": "----.", "0": "-----", ", ": "--..--", ".": ".-.-.-",
+    "?": "..--..", "/": "-..-.", "-": "-....-", "(": "-.--.", ")": "-.--.-",
+}
+
+
+def morse_encode(s: str) -> str:
+    s = s.upper()
+    encoded = [MORSE_CODE_DICT.get(ch, '') for ch in s]
+    return ' '.join(encoded)
+
 ENCODERS = {
     "base64": base64_encode,
     "base32": base32_encode,
@@ -62,4 +82,5 @@ ENCODERS = {
     "url": url_encode,
     "rot13": rot13_encode,
     "gzip64": gzip64_encode,
+    "morse": morse_encode,
 }
