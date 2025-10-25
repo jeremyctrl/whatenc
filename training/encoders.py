@@ -48,7 +48,14 @@ def rot13_encode(s: str) -> str:
 
 def rot47_encode(s: str) -> str:
     try:
-        return codecs.encode(s, "rot_47")
+        result = []
+        for char in s:
+            ascii_code = ord(char)
+            if 33 <= ascii_code <= 126:
+                result.append(chr(33 + ((ascii_code + 14) % 94)))
+            else:
+                result.append(char)
+        return ''.join(result)
     except Exception:
         return ""
 
