@@ -90,6 +90,9 @@ def morse_encode(s: str) -> str:
 def md5_hash(s: str) -> str:
     return hashlib.md5(s.encode()).hexdigest()
 
+def sha1_hash(s: str) -> str:
+    return hashlib.sha1(s.encode()).hexdigest()
+
 ENCODERS = {
     "base64": base64_encode,
     "base32": base32_encode,
@@ -101,4 +104,5 @@ ENCODERS = {
     "gzip64": gzip64_encode,
     "morse": morse_encode,
     "md5": md5_hash,
+    "sha1": sha1_hash,
 }
