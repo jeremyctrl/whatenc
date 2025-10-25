@@ -14,7 +14,7 @@ MODEL_DIR.mkdir(exist_ok=True, parents=True)
 
 # Corpus
 LANG = "en"
-CORPUS_LIMIT = 5000
+CORPUS_LIMIT = 7500
 
 # Model
 MODEL_INPUT_DIM = 10

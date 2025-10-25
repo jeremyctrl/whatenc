@@ -11,4 +11,4 @@ wheels/
 
 # Training
 data/
-model/
+models/
