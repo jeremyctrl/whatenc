@@ -46,6 +46,11 @@ def rot13_encode(s: str) -> str:
     except Exception:
         return ""
 
+def rot47_encode(s: str) -> str:
+    try:
+        return codecs.encode(s, "rot_47")
+    except Exception:
+        return ""
 
 def gzip64_encode(s: str) -> str:
     try:
@@ -81,6 +86,7 @@ ENCODERS = {
     "hex": hex_encode,
     "url": url_encode,
     "rot13": rot13_encode,
+    "rot47": rot47_encode,
     "gzip64": gzip64_encode,
     "morse": morse_encode,
 }
