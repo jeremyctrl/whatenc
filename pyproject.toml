@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    
 ]
 
 [project.optional-dependencies]
@@ -16,6 +17,8 @@ dev = [
 train = [
     "datasets>=4.3.0",
     "scikit-learn>=1.7.2",
+    "skl2onnx>=1.19.1",
+    "joblib>=1.5.2",
 ]
 
 [project.scripts]
