@@ -2,7 +2,7 @@ from pathlib import Path
 
 # Paths
 DATA_DIR = Path("data")
-MODEL_DIR = Path("model")
+MODEL_DIR = Path("models")
 
 CORPUS_PATH = DATA_DIR / "wikipedia_corpus.txt"
 
