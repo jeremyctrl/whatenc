@@ -5,7 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    
+    "numpy>=2.3.4",
+    "onnxruntime>=1.23.2",
 ]
 
 [project.optional-dependencies]
@@ -23,3 +24,10 @@ train = [
 
 [project.scripts]
 whatenc = "whatenc.cli:main"
+
+[tool.setuptools]
+packages = ["whatenc"]
+include-package-data = true
+
+[tool.setuptools.data-files]
+models = ["models/model.onnx"]
