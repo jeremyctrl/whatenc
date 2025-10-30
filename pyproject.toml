@@ -1,6 +1,6 @@
 [project]
 name = "whatenc"
-version = "0.3.0"
+version = "0.3.1"
 description = "Simple text encoding type classifier"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -8,6 +8,11 @@ dependencies = [
     "numpy>=2.3.4",
     "onnxruntime>=1.23.2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/jeremyctrl/whatenc"
+Repository = "https://github.com/jeremyctrl/whatenc"
+Issues = "https://github.com/jeremyctrl/whatenc/issues"
 
 [project.optional-dependencies]
 dev = [
