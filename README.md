@@ -11,7 +11,7 @@ Text encoding type classifier.
 
 `whatenc` is a command-line tool that uses a gradient-boosted tree classifier to detect the encoding of a given string or file.
 
-The model is trained on text samples from the Wikipedia corpus, with lines encoded using multiple encoding schemes to generate labeled examples.
+The model is trained on text samples from the English, Greek, Russian, Hebrew, and Arabic Wikipedia corpora, chosen to represent a diverse set of writing systems (Latin, Greek, Cyrillic, Hebrew, and Arabic scripts). Each line is encoded using multiple encoding schemes to generate labeled examples.
 
 ## How It Works
 
