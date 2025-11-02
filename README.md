@@ -57,28 +57,28 @@ pipx install whatenc
 ## Usage
 
 ```bash
-whatenc aGVsbG8gd29ybGQ=
+whatenc hello
 whatenc samples.txt
 ```
 
 ### Examples
 
 ```bash
-[+] input: aGVsbG8gd29ybGQ=
-   [=] top guess   = base64
-      [~] base64   = 0.455
-      [~] plain    = 0.312
-      [~] url      = 0.126
+[+] input: ZW5jb2RlIHRvIGJhc2U2NCBmb3JtYXQ=
+   [~] top guess   = base64
+      [=] base64   = 0.875
+      [=] base32   = 0.101
+      [=] gzip64   = 0.019
 
-[+] input: hello
-   [=] top guess   = plain
-      [~] plain    = 0.552
-      [~] url      = 0.246
-      [~] rot13    = 0.192
+[+] input: hi
+   [~] top guess   = plain
+      [=] plain    = 0.772
+      [=] base64   = 0.081
+      [=] base32   = 0.075
 
-[+] input: uryyb jbeyq
-   [=] top guess   = rot13
-      [~] rot13    = 0.555
-      [~] plain    = 0.440
-      [~] url      = 0.004
+[+] input: bfa99df33b137bc8fb5f5407d7e58da8
+   [~] top guess   = md5
+      [=] md5      = 1.000
+      [=] sha1     = 0.000
+      [=] url      = 0.000
 ```
