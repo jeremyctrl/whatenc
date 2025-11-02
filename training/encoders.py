@@ -1,3 +1,4 @@
+from functools import wraps
 import base64
 import binascii
 import codecs
@@ -5,67 +6,54 @@ import urllib.parse
 import zlib
 import hashlib
 
+def encoder(fn):
+    @wraps(fn)
+    def wrapper(s: str) -> str:
+        try:
+            return fn(s)
+        except Exception:
+            return ""
+    return wrapper
 
+@encoder
 def base64_encode(s: str) -> str:
-    try:
-        return base64.b64encode(s.encode()).decode()
-    except Exception:
-        return ""
+    return base64.b64encode(s.encode()).decode()
 
-
+@encoder
 def base32_encode(s: str) -> str:
-    try:
-        return base64.b32encode(s.encode()).decode()
-    except Exception:
-        return ""
+    return base64.b32encode(s.encode()).decode()
 
-
+@encoder
 def base85_encode(s: str) -> str:
-    try:
-        return base64.b85encode(s.encode()).decode()
-    except Exception:
-        return ""
+    return base64.b85encode(s.encode()).decode()
 
-
+@encoder
 def hex_encode(s: str) -> str:
-    try:
-        return binascii.hexlify(s.encode()).decode()
-    except Exception:
-        return ""
+    return binascii.hexlify(s.encode()).decode()
 
-
+@encoder
 def url_encode(s: str) -> str:
-    try:
-        return urllib.parse.quote(s)
-    except Exception:
-        return ""
+    return urllib.parse.quote(s)
 
-
+@encoder
 def rot13_encode(s: str) -> str:
-    try:
-        return codecs.encode(s, "rot_13")
-    except Exception:
-        return ""
+    return codecs.encode(s, "rot_13")
 
+@encoder
 def rot47_encode(s: str) -> str:
-    try:
-        result = []
-        for char in s:
-            ascii_code = ord(char)
-            if 33 <= ascii_code <= 126:
-                result.append(chr(33 + ((ascii_code + 14) % 94)))
-            else:
-                result.append(char)
-        return ''.join(result)
-    except Exception:
-        return ""
+    result = []
+    for char in s:
+        ascii_code = ord(char)
+        if 33 <= ascii_code <= 126:
+            result.append(chr(33 + ((ascii_code + 14) % 94)))
+        else:
+            result.append(char)
+    return ''.join(result)
 
+@encoder
 def gzip64_encode(s: str) -> str:
-    try:
-        compressed = zlib.compress(s.encode())
-        return base64.b64encode(compressed).decode()
-    except Exception:
-        return ""
+    compressed = zlib.compress(s.encode())
+    return base64.b64encode(compressed).decode()
 
 
 MORSE_CODE_DICT = {
@@ -81,27 +69,33 @@ MORSE_CODE_DICT = {
     "?": "..--..", "/": "-..-.", "-": "-....-", "(": "-.--.", ")": "-.--.-",
 }
 
-
+@encoder
 def morse_encode(s: str) -> str:
     s = s.upper()
     encoded = [MORSE_CODE_DICT.get(ch, '') for ch in s]
     return ' '.join(encoded)
 
+@encoder
 def md5_hash(s: str) -> str:
     return hashlib.md5(s.encode()).hexdigest()
 
+@encoder
 def sha1_hash(s: str) -> str:
     return hashlib.sha1(s.encode()).hexdigest()
 
+@encoder
 def sha224_hash(s: str) -> str:
     return hashlib.sha224(s.encode()).hexdigest()
 
+@encoder
 def sha256_hash(s: str) -> str:
     return hashlib.sha256(s.encode()).hexdigest()
 
+@encoder
 def sha384_hash(s: str) -> str:
     return hashlib.sha384(s.encode()).hexdigest()
 
+@encoder
 def sha512_hash(s: str) -> str:
     return hashlib.sha512(s.encode()).hexdigest()
 
