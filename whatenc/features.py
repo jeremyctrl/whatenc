@@ -32,7 +32,6 @@ def extract_features(s: str) -> np.ndarray:
     n = len(s)
     encoded = s.encode("utf-8", errors="ignore")
 
-    printable_ratio = sum(c.isprintable() for c in s) / n
     alpha_ratio = sum(c.isalpha() for c in s) / n
     digit_ratio = sum(c.isdigit() for c in s) / n
     padding_ratio = s.count("=") / n
@@ -41,8 +40,6 @@ def extract_features(s: str) -> np.ndarray:
     return np.array(
         [
             n,
-            n % 4,
-            printable_ratio,
             alpha_ratio,
             digit_ratio,
             padding_ratio,
