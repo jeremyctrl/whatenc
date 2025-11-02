@@ -15,6 +15,8 @@ def generate_samples(corpus):
         for name, encoder in ENCODERS.items():
             try:
                 encoded = encoder(text)
+                if not encoded or encoded == text:
+                    continue
                 samples.append((encoded, name))
             except Exception as e:
                 print(f"skipped {name}: {e}")
