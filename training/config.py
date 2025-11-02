@@ -13,7 +13,7 @@ DATA_DIR.mkdir(exist_ok=True, parents=True)
 MODEL_DIR.mkdir(exist_ok=True, parents=True)
 
 # Corpus
-LANGS = ["en", "ru", "he", "ar"]
+LANGS = ["en", "el", "ru", "he", "ar"]
 CORPUS_LIMIT = 7500
 
 # Model
