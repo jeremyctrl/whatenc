@@ -42,7 +42,7 @@ Features include:
 | Category | Encodings |
 | :------- | :-------- |
 | Base encodings | `base32`, `base64`, `base85`, `hex`, `url` |
-| Text ciphers | `rot13`, `rot47`, `morse` |
+| Text ciphers | `morse` |
 | Compression | `gzip64` |
 | Hash digests | `md5`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512` |
 
