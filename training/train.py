@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 from config import MODEL_PATH, RANDOM_STATE, TEST_SIZE
 from dataset import generate_samples, load_corpus
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
@@ -25,8 +25,7 @@ def main():
         X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE
     )
 
-    clf = GradientBoostingClassifier(
-        n_estimators=200,
+    clf = HistGradientBoostingClassifier(
         max_depth=3,
         learning_rate=0.1,
         random_state=RANDOM_STATE,
