@@ -1,11 +1,21 @@
 import math
 import zlib
 import numpy as np
+from collections import Counter
 
 def shannon_entropy(s: str) -> float:
     if not s:
         return 0.0
     probs = [s.count(c) / len(s) for c in set(s)]
+    return -sum(p * math.log2(p) for p in probs)
+
+def bigram_entropy(s: str) -> float:
+    if len(s) < 2:
+        return 0.0
+    bigrams = [s[i:i+2] for i in range(len(s) - 1)]
+    counts = Counter(bigrams)
+    total = len(bigrams)
+    probs = [c / total for c in counts.values()]
     return -sum(p * math.log2(p) for p in probs)
 
 def non_ascii_ratio(s: str) -> float:
@@ -38,6 +48,7 @@ def extract_features(s: str) -> np.ndarray:
             padding_ratio,
             compressibility,
             shannon_entropy(s),
+            bigram_entropy(s),
             non_ascii_ratio(s),
             word_density(s),
         ],
