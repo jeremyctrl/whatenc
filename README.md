@@ -26,14 +26,13 @@ Features include:
 | Feature | Description |
 | :------ | :---------- |
 | Length (`n`) | Number of characters in the input |
-| `n % 4` | Useful for identifying base-N encodings |
-| Printable Ratio | Fraction of characters in `string.printable` |
 | Alphabetic / Digit Ratios | Ratio of letters and digits to total length |
 | Padding Ratio (`=`) | Common in Base64/32 encodings |
 | Compressibility | Ratio of compressed to raw byte length |
-| Shannon Entropy | Measure of randomness in character distribution |
-| English Letter Correlation | Correlation between letter frequencies and English letter frequency distribution |
-| Stopword Ratio | Fraction of English stopwords | 
+| Shannon Entropy | Measure of randomness in single-character frequency distribution |
+| Bigram Entropy | Measure of randomness in two-character (bigram) frequency distribution |
+| Non-ASCII Ratio | Fraction of characters outside the ASCII range |
+| Word Density | ratio of string length to word count | 
 
 ### Supported Encodings
 
