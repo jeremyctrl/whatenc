@@ -1,7 +1,7 @@
 [project]
 name = "whatenc"
-version = "0.4.0"
-description = "Simple text encoding type classifier"
+version = "0.5.0"
+description = "Text encoding type classifier"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
