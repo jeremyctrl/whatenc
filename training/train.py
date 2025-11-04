@@ -3,10 +3,11 @@ from pathlib import Path
 
 import joblib
 import numpy as np
+import pandas as pd
 from config import MODEL_PATH, RANDOM_STATE, TEST_SIZE
 from dataset import generate_samples, load_corpus
 from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -37,6 +38,11 @@ def main():
 
     y_pred = clf.predict(X_test)
     print(classification_report(y_test, y_pred))
+
+    cm = confusion_matrix(y_test, y_pred, labels=clf.classes_)
+    cm_df = pd.DataFrame(cm, index=clf.classes_, columns=clf.classes_)
+    print("\nConfusion Matrix:")
+    print(cm_df)
 
     joblib.dump(clf, MODEL_PATH)
     print(f"model saved to {MODEL_PATH}")
