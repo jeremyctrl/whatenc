@@ -27,7 +27,8 @@ def main():
 
     clf = HistGradientBoostingClassifier(
         max_depth=3,
-        learning_rate=0.1,
+        max_iter=500,
+        learning_rate=0.05,
         random_state=RANDOM_STATE,
         verbose=1,
     )
