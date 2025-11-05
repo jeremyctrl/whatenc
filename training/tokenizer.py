@@ -22,5 +22,5 @@ def build_vocab(samples, min_freq=-1):
 
 
 def encode_bigrams(text: str, stoi: dict):
-    bigrams = encode_bigrams(text)
+    bigrams = extract_bigrams(text)
     return torch.tensor([stoi.get(bg, 0) for bg in bigrams], dtype=torch.long)
