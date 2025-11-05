@@ -1,4 +1,5 @@
 import json
+import time
 
 import torch
 import torch.nn as nn
@@ -94,7 +95,8 @@ def main():
         model.train()
 
         total_loss = 0.0
-        for X, y in dataloader:
+        for idx, (X, y) in enumerate(dataloader):
+            start = time.time()
             X, y = X.to(DEVICE), y.to(DEVICE)
 
             optimizer.zero_grad()
@@ -104,6 +106,10 @@ def main():
             optimizer.step()
 
             total_loss += loss.item()
+
+            if idx % 50 == 0 or idx == len(dataloader):
+                elapsed = time.time() - start
+                print(f"[epoch {epoch}] batch {idx}/{len(dataloader)} - {elapsed:.2f}s")
 
         avg_loss = total_loss / len(dataloader)
         print(f"epoch {epoch + 1}/{EPOCHS} - loss: {avg_loss:.4f}")
