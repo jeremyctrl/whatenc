@@ -1,21 +1,17 @@
 from pathlib import Path
 
-# Paths
 DATA_DIR = Path("data")
 MODEL_DIR = Path("models")
 
-CORPUS_PATH = DATA_DIR / "wikipedia_corpus.txt"
+for d in (MODEL_DIR, DATA_DIR):
+    d.mkdir(exist_ok=True, parents=True)
 
-MODEL_PATH = MODEL_DIR / "model.joblib"
+CORPUS_PATH = DATA_DIR / "wikipedia_corpus.txt"
+MODEL_PATH = MODEL_DIR / "model.pt"
 ONNX_PATH = MODEL_DIR / "model.onnx"
 
-DATA_DIR.mkdir(exist_ok=True, parents=True)
-MODEL_DIR.mkdir(exist_ok=True, parents=True)
-
-# Corpus
 LANGS = ["en", "el", "ru", "he", "ar"]
 CORPUS_LIMIT = 10000
 
-# Model
 TEST_SIZE = 0.2
 RANDOM_STATE = 42
