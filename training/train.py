@@ -1,6 +1,7 @@
 import json
 
 import torch
+import torch.nn as nn
 from config import META_PATH
 from dataset import generate_samples, load_corpus
 from tokenizer import build_vocab, encode_bigrams
@@ -22,6 +23,27 @@ class TextDataset(Dataset):
         x = encode_bigrams(text, self.stoi)
         y = self.label2idx[label]
         return x, y
+
+
+class CNN(nn.Module):
+    def __init__(self, vocab_size, embed_dim, num_classes):
+        super().__init__()
+
+        self.embedding = nn.Embedding(vocab_size + 1, embed_dim, 0)
+        self.conv = nn.Sequential(
+            nn.Conv1d(embed_dim, 128, kernel_size=5, padding=2),
+            nn.ReLU(),
+            nn.MaxPool1d(2),
+            nn.Conv1d(128, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveMaxPool1d(1),
+        )
+        self.fc = nn.Linear(128, num_classes)
+
+    def forward(self, x):
+        x = self.embedding(x).transpose(1, 2)
+        x = self.conv(x).squeeze(-1)
+        return self.fc(x)
 
 
 def collate_fn(batch):
@@ -57,11 +79,15 @@ def main():
     dataset = TextDataset(samples, stoi, label2idx)
     dataloader = DataLoader(dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 
+    vocab_size = len(stoi)
+    num_classes = len(label2idx)
+    model = CNN(vocab_size=vocab_size, embed_dim=128, num_classes=num_classes)
+
     batch_x, batch_y = next(iter(dataloader))
-    print("batch x shape:", batch_x.shape)
-    print("batch y shape:", batch_y.shape)
-    print("first sample (tensor):", batch_x[0][:30])
-    print("first sample label id:", batch_y[0].item())
+    logits = model(batch_x)
+    print("Input shape:", batch_x.shape)
+    print("Logits shape:", logits.shape)
+    print("Example logits row:", logits[0].detach().numpy()[:5])
 
 
 if __name__ == "__main__":
