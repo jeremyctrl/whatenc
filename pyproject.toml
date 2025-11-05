@@ -33,4 +33,4 @@ packages = ["whatenc"]
 include-package-data = true
 
 [tool.setuptools.data-files]
-models = ["models/model.onnx"]
+models = ["models/model.onnx", "models/meta.json"]
