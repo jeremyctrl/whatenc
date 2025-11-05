@@ -3,11 +3,21 @@ import time
 
 import torch
 import torch.nn as nn
-from config import BATCH_SIZE, DEVICE, EPOCHS, LEARNING_RATE, META_PATH, MODEL_PATH
+import torch.nn.functional as F
+from config import (
+    BATCH_SIZE,
+    DEVICE,
+    EPOCHS,
+    LEARNING_RATE,
+    META_PATH,
+    MODEL_PATH,
+    TEST_SIZE,
+)
 from dataset import generate_samples, load_corpus
 from tokenizer import build_vocab, encode_bigrams
-from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
+
+MAX_LEN = 200
 
 
 class TextDataset(Dataset):
@@ -21,8 +31,10 @@ class TextDataset(Dataset):
 
     def __getitem__(self, idx):
         text, label = self.samples[idx]
-        x = encode_bigrams(text, self.stoi)
-        y = self.label2idx[label]
+        tokens = encode_bigrams(text[:MAX_LEN], self.stoi)
+        x = torch.tensor(tokens[:MAX_LEN], dtype=torch.long)
+        x = F.pad(x, (0, MAX_LEN - x.size(0)))
+        y = torch.tensor(self.label2idx[label], dtype=torch.long)
         return x, y
 
 
@@ -45,13 +57,6 @@ class CNN(nn.Module):
         x = self.embedding(x).transpose(1, 2)
         x = self.conv(x).squeeze(-1)
         return self.fc(x)
-
-
-def collate_fn(batch):
-    xs, ys = zip(*batch)
-    xs = pad_sequence(xs, batch_first=True)
-    ys = torch.tensor(ys)
-    return xs, ys
 
 
 def main():
@@ -77,10 +82,13 @@ def main():
             indent=2,
         )
 
-    dataset = TextDataset(samples, stoi, label2idx)
-    dataloader = DataLoader(
-        dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn
-    )
+    split = int(len(samples) * (1.0 - TEST_SIZE))
+
+    train_dataset = TextDataset(samples[:split], stoi, label2idx)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+
+    test_dataset = TextDataset(samples[split:], stoi, label2idx)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
     vocab_size = len(stoi)
     num_classes = len(label2idx)
@@ -95,7 +103,7 @@ def main():
         model.train()
 
         total_loss = 0.0
-        for idx, (X, y) in enumerate(dataloader):
+        for idx, (X, y) in enumerate(train_loader):
             start = time.time()
             X, y = X.to(DEVICE), y.to(DEVICE)
 
@@ -107,12 +115,38 @@ def main():
 
             total_loss += loss.item()
 
-            if idx % 50 == 0 or idx == len(dataloader):
+            if idx % 50 == 0 or idx == len(train_loader):
                 elapsed = time.time() - start
-                print(f"[epoch {epoch}] batch {idx}/{len(dataloader)} - {elapsed:.2f}s")
+                print(
+                    f"[epoch {epoch}] batch {idx}/{len(train_loader)} - {elapsed:.2f}s"
+                )
 
-        avg_loss = total_loss / len(dataloader)
+        avg_loss = total_loss / len(train_loader)
         print(f"epoch {epoch + 1}/{EPOCHS} - loss: {avg_loss:.4f}")
+
+    model.eval()
+    cm = torch.zeros(num_classes, num_classes, dtype=torch.int64)
+
+    with torch.no_grad():
+        for X, y in test_loader:
+            X, y = X.to(DEVICE), y.to(DEVICE)
+            preds = model(X).argmax(dim=1)
+            for t, p in zip(y.view(-1), preds.view(-1)):
+                cm[t.long(), p.long()] += 1
+
+    cm_np = cm.numpy()
+    label_width = max(len(lbl) for lbl in labels)
+
+    header = " " * (label_width + 2) + " ".join(
+        f"{lbl:>{label_width}}" for lbl in labels
+    )
+    print(header)
+
+    for i, lbl in enumerate(labels):
+        row_counts = " ".join(
+            f"{cm_np[i, j]:>{label_width}d}" for j in range(len(labels))
+        )
+        print(f"{lbl:>{label_width}} | {row_counts}")
 
     torch.save(model.state_dict(), MODEL_PATH)
     print(f"model saved to {MODEL_PATH}")
