@@ -1,3 +1,4 @@
+import torch
 from pathlib import Path
 
 DATA_DIR = Path("data")
@@ -14,5 +15,9 @@ ONNX_PATH = MODEL_DIR / "model.onnx"
 LANGS = ["en", "el", "ru", "he", "ar"]
 CORPUS_LIMIT = 10000
 
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+EPOCHS = 5
+BATCH_SIZE = 64
+LEARNING_RATE = 1e-3
 TEST_SIZE = 0.2
-RANDOM_STATE = 42

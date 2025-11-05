@@ -2,7 +2,7 @@ import json
 
 import torch
 import torch.nn as nn
-from config import META_PATH
+from config import BATCH_SIZE, DEVICE, EPOCHS, LEARNING_RATE, META_PATH, MODEL_PATH
 from dataset import generate_samples, load_corpus
 from tokenizer import build_vocab, encode_bigrams
 from torch.nn.utils.rnn import pad_sequence
@@ -77,17 +77,39 @@ def main():
         )
 
     dataset = TextDataset(samples, stoi, label2idx)
-    dataloader = DataLoader(dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
+    dataloader = DataLoader(
+        dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn
+    )
 
     vocab_size = len(stoi)
     num_classes = len(label2idx)
-    model = CNN(vocab_size=vocab_size, embed_dim=128, num_classes=num_classes)
 
-    batch_x, batch_y = next(iter(dataloader))
-    logits = model(batch_x)
-    print("Input shape:", batch_x.shape)
-    print("Logits shape:", logits.shape)
-    print("Example logits row:", logits[0].detach().numpy()[:5])
+    model = CNN(vocab_size=vocab_size, embed_dim=128, num_classes=num_classes)
+    model = model.to(DEVICE)
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+
+    for epoch in range(EPOCHS):
+        model.train()
+
+        total_loss = 0.0
+        for X, y in dataloader:
+            X, y = X.to(DEVICE), y.to(DEVICE)
+
+            optimizer.zero_grad()
+            logits = model(X)
+            loss = criterion(logits, y)
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.item()
+
+        avg_loss = total_loss / len(dataloader)
+        print(f"epoch {epoch + 1}/{EPOCHS} - loss: {avg_loss:.4f}")
+
+    torch.save(model.state_dict(), MODEL_PATH)
+    print(f"model saved to {MODEL_PATH}")
 
 
 if __name__ == "__main__":
