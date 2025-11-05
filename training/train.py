@@ -44,14 +44,14 @@ class CNN(nn.Module):
 
         self.embedding = nn.Embedding(vocab_size + 1, embed_dim, 0)
         self.conv = nn.Sequential(
-            nn.Conv1d(embed_dim, 128, kernel_size=5, padding=2),
+            nn.Conv1d(embed_dim, 96, kernel_size=5, padding=2),
             nn.ReLU(),
             nn.MaxPool1d(2),
-            nn.Conv1d(128, 128, kernel_size=3, padding=1),
+            nn.Conv1d(96, 96, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.AdaptiveMaxPool1d(1),
         )
-        self.fc = nn.Linear(128, num_classes)
+        self.fc = nn.Linear(96, num_classes)
 
     def forward(self, x):
         x = self.embedding(x).transpose(1, 2)
