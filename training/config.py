@@ -14,7 +14,7 @@ MODEL_DIR.mkdir(exist_ok=True, parents=True)
 
 # Corpus
 LANGS = ["en", "el", "ru", "he", "ar"]
-CORPUS_LIMIT = 7500
+CORPUS_LIMIT = 10000
 
 # Model
 TEST_SIZE = 0.2

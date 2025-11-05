@@ -16,7 +16,7 @@ def fetch_corpus(lang: str, limit: int) -> list[str]:
     for article in dataset:
         text = article["text"].strip()
         for line in text.split("\n"):
-            if len(line.strip()) > 16:
+            if len(line.strip()) > 4:
                 lines.append(line.strip())
         if len(lines) >= CORPUS_LIMIT:
             break
