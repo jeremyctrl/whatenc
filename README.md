@@ -74,7 +74,7 @@ whatenc samples.txt
 [*] loading model
 [+] input: bfa99df33b137bc8fb5f5407d7e58da8
    [~] top guess   = md5
-      [=] md5      = 0.995
-      [=] sha1     = 0.005
+      [=] md5      = 0.999
+      [=] sha1     = 0.001
       [=] sha224   = 0.000
 ```

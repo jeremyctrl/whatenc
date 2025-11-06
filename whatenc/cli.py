@@ -46,7 +46,7 @@ def print_result(line: str, top):
 def main():
     parser = argparse.ArgumentParser(prog="whatenc")
     parser.add_argument("input", help="string or path to text file")
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.7.0")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.7.1")
     args = parser.parse_args()
 
     data_path = Path(sysconfig.get_paths()["data"]) / "models"
