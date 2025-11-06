@@ -1,3 +1,4 @@
+import random
 import base64
 import binascii
 import hashlib
@@ -34,7 +35,10 @@ def base85_encode(s: str) -> str:
 
 @encoder
 def hex_encode(s: str) -> str:
-    return binascii.hexlify(s.encode()).decode()
+    encoded = binascii.hexlify(s.encode()).decode()
+    if random.random() < 0.5:
+        encoded = encoded.upper()
+    return encoded
 
 
 @encoder
