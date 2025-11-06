@@ -9,30 +9,19 @@ Text encoding type classifier.
 
 </div>
 
-`whatenc` is a command-line tool that uses a gradient-boosted tree classifier to detect the encoding of a given string or file.
+`whatenc` is a command-line tool that identifies the encoding or transformation of a given string or file.
 
 The model is trained on text samples from the English, Greek, Russian, Hebrew, and Arabic Wikipedia corpora, chosen to represent a diverse set of writing systems (Latin, Greek, Cyrillic, Hebrew, and Arabic scripts). Each line is encoded using multiple encoding schemes to generate labeled examples.
 
 ## How It Works
 
-`whatenc` applies a feature-based approach to characterize text, then feeds these features into a gradient-boosted decision tree model to classify the encoding.
+`whatenc` uses a character-level 1D Convolutional Neural Network trained directly on bigram token sequences. 
 
-### Feature Extraction
+Each training sample is represented as:
+- bigram of characters, padded to a fixed maximum length
+- a true length scalar feature, allowing the network to learn relative string lengths
 
-Each input string is converted into a feature vector describing its statistical properties.
-
-Features include:
-
-| Feature | Description |
-| :------ | :---------- |
-| Length (`n`) | Number of characters in the input |
-| Alphabetic / Digit Ratios | Ratio of letters and digits to total length |
-| Padding Ratio (`=`) | Common in Base64/32 encodings |
-| Compressibility | Ratio of compressed to raw byte length |
-| Shannon Entropy | Measure of randomness in single-character frequency distribution |
-| Bigram Entropy | Measure of randomness in two-character (bigram) frequency distribution |
-| Non-ASCII Ratio | Fraction of characters outside the ASCII range |
-| Word Density | ratio of string length to word count | 
+This neural approach achieves near-perfect classification accuracy after only a few epochs.
 
 ### Supported Encodings
 
@@ -65,19 +54,27 @@ whatenc samples.txt
 ```bash
 [+] input: ZW5jb2RlIHRvIGJhc2U2NCBmb3JtYXQ=
    [~] top guess   = base64
-      [=] base64   = 0.875
-      [=] base32   = 0.101
-      [=] gzip64   = 0.019
+      [=] base64   = 1.000
+      [=] base85   = 0.000
+      [=] plain    = 0.000
 
-[+] input: hi
+[+] input: hello
    [~] top guess   = plain
-      [=] plain    = 0.772
-      [=] base64   = 0.081
-      [=] base32   = 0.075
+      [=] plain    = 1.000
+      [=] md5      = 0.000
+      [=] base64   = 0.000
 
+[*] loading model
+[+] input: האקדמיה ללשון העברית
+   [~] top guess   = plain
+      [=] plain    = 1.000
+      [=] base64   = 0.000
+      [=] base85   = 0.000
+
+[*] loading model
 [+] input: bfa99df33b137bc8fb5f5407d7e58da8
    [~] top guess   = md5
-      [=] md5      = 1.000
-      [=] sha1     = 0.000
-      [=] url      = 0.000
+      [=] md5      = 0.995
+      [=] sha1     = 0.005
+      [=] sha224   = 0.000
 ```
