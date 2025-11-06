@@ -1,6 +1,6 @@
 [project]
 name = "whatenc"
-version = "0.5.1"
+version = "0.6.0"
 description = "Text encoding type classifier"
 readme = "README.md"
 requires-python = ">=3.13"
