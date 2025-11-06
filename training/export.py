@@ -1,27 +1,40 @@
-import sys
-from pathlib import Path
+import json
+import torch
+from config import MODEL_PATH, ONNX_PATH, META_PATH, MAX_LEN
+from train import CNN
 
-import joblib
-from config import MODEL_PATH, ONNX_PATH
-from skl2onnx import convert_sklearn
-from skl2onnx.common.data_types import FloatTensorType
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from whatenc.features import extract_features
-
-MODEL_INPUT_DIM = extract_features("test").shape[0]
 
 def main():
-    print("loading trained model")
-    clf = joblib.load(MODEL_PATH)
+    print("loading metadata")
+    with open(META_PATH, "r", encoding="utf-8") as f:
+        meta = json.load(f)
 
-    print("converting to onnx")
-    initial_type = [("input", FloatTensorType([None, MODEL_INPUT_DIM]))]
-    onnx_model = convert_sklearn(clf, initial_types=initial_type)
-    with open(ONNX_PATH, "wb") as f:
-        f.write(onnx_model.SerializeToString())
-    print(f"saved onnx model to {ONNX_PATH}")
+    vocab_size = len(meta["stoi"])
+    num_classes = len(meta["label2idx"])
+
+    print("initializing model")
+    model = CNN(vocab_size=vocab_size, embed_dim=128, num_classes=num_classes)
+    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+    model.eval()
+
+    print("exporting to ONNX")
+    dummy_x = torch.zeros(1, MAX_LEN, dtype=torch.long)
+    dummy_len = torch.tensor([MAX_LEN], dtype=torch.float32)
+
+    torch.onnx.export(
+        model,
+        (dummy_x, dummy_len),
+        ONNX_PATH,
+        input_names=["input_text", "input_length"],
+        output_names=["logits"],
+        dynamic_axes={
+            "input_text": {0: "batch_size"},
+            "input_length": {0: "batch_size"},
+            "logits": {0: "batch_size"},
+        },
+    )
+
+    print(f"saved ONNX model to {ONNX_PATH}")
 
 
 if __name__ == "__main__":

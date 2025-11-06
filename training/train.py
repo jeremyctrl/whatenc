@@ -10,6 +10,7 @@ from config import (
     DEVICE,
     EPOCHS,
     LEARNING_RATE,
+    MAX_LEN,
     META_PATH,
     MODEL_PATH,
     TEST_SIZE,
@@ -17,8 +18,6 @@ from config import (
 from dataset import generate_samples, load_corpus
 from tokenizer import build_vocab, encode_bigrams
 from torch.utils.data import DataLoader, Dataset
-
-MAX_LEN = 200
 
 
 class TextDataset(Dataset):
@@ -53,13 +52,13 @@ class CNN(nn.Module):
             nn.MaxPool1d(2),
             nn.Conv1d(96, 96, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.AdaptiveMaxPool1d(1),
         )
         self.fc = nn.Linear(96 + 1, num_classes)
 
     def forward(self, x, lengths):
         x = self.embedding(x).transpose(1, 2)
-        x = self.conv(x).squeeze(-1)
+        x = self.conv(x)
+        x = x.max(dim=-1).values
         l = (lengths / MAX_LEN).unsqueeze(1)  # noqa: E741
         x = torch.cat([x, l], dim=1)
         return self.fc(x)
