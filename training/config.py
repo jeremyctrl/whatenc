@@ -19,7 +19,7 @@ CORPUS_LIMIT = 10000
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-EPOCHS = 5
+EPOCHS = 10
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-3
 TEST_SIZE = 0.2
