@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from config import (
     BATCH_SIZE,
+    CHECKPOINT_PATH,
     DEVICE,
     EPOCHS,
     LEARNING_RATE,
@@ -104,6 +105,8 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+    save_interval = max(1, EPOCHS // 3)
+
     for epoch in range(EPOCHS):
         model.train()
         total_loss = 0.0
@@ -130,6 +133,10 @@ def main():
             f"epoch {epoch + 1}/{EPOCHS} - loss: {total_loss / len(train_loader):.4f} "
             f"({time.time() - start:.1f}s)"
         )
+
+        if (epoch + 1) % save_interval == 0 or epoch == EPOCHS - 1:
+            torch.save(model.state_dict(), CHECKPOINT_PATH)
+            print(f"saved checkpoint to {CHECKPOINT_PATH}")
 
     model.eval()
     cm = torch.zeros(num_classes, num_classes, dtype=torch.int64)

@@ -9,6 +9,7 @@ for d in (MODEL_DIR, DATA_DIR):
 
 CORPUS_PATH = DATA_DIR / "wikipedia_corpus.txt"
 META_PATH = MODEL_DIR / "meta.json"
+CHECKPOINT_PATH = MODEL_DIR / "checkpoint.pt"
 MODEL_PATH = MODEL_DIR / "model.pt"
 ONNX_PATH = MODEL_DIR / "model.onnx"
 
@@ -17,7 +18,7 @@ CORPUS_LIMIT = 10000
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-EPOCHS = 1
+EPOCHS = 5
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-3
 TEST_SIZE = 0.2
