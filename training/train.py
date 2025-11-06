@@ -40,6 +40,7 @@ class TextDataset(Dataset):
 
         return x, torch.tensor(true_len, dtype=torch.float32), y
 
+
 class CNN(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_classes):
         super().__init__()
@@ -105,10 +106,10 @@ def main():
 
     for epoch in range(EPOCHS):
         model.train()
-
         total_loss = 0.0
+        start = time.time()
+
         for idx, (X, L, y) in enumerate(train_loader):
-            start = time.time()
             X, L, y = X.to(DEVICE), L.to(DEVICE), y.to(DEVICE)
 
             optimizer.zero_grad()
@@ -119,14 +120,16 @@ def main():
 
             total_loss += loss.item()
 
-            if idx % 50 == 0 or idx == len(train_loader):
+            if idx % 50 == 0 or idx == len(train_loader) - 1:
                 elapsed = time.time() - start
                 print(
-                    f"[epoch {epoch}] batch {idx}/{len(train_loader)} - {elapsed:.2f}s"
+                    f"[epoch {epoch + 1}] batch {idx + 1}/{len(train_loader)} | loss {loss.item():.4f} | {elapsed:.1f}s"
                 )
 
-        avg_loss = total_loss / len(train_loader)
-        print(f"epoch {epoch + 1}/{EPOCHS} - loss: {avg_loss:.4f}")
+        print(
+            f"epoch {epoch + 1}/{EPOCHS} - loss: {total_loss / len(train_loader):.4f} "
+            f"({time.time() - start:.1f}s)"
+        )
 
     model.eval()
     cm = torch.zeros(num_classes, num_classes, dtype=torch.int64)
