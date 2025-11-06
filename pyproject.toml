@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.3.4",
     "onnxruntime>=1.23.2",
+    "torch>=2.9.0",
 ]
 
 [project.urls]
@@ -23,7 +24,6 @@ dev = [
 train = [
     "datasets>=4.3.0",
     "onnxscript>=0.5.6",
-    "torch>=2.9.0",
 ]
 
 [project.scripts]
@@ -34,4 +34,4 @@ packages = ["whatenc"]
 include-package-data = true
 
 [tool.setuptools.data-files]
-models = ["models/model.onnx", "models/meta.json"]
+models = ["models/model.onnx", "models/meta.json", "models/model.onnx.data"]
