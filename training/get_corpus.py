@@ -1,7 +1,10 @@
 import random
+from pathlib import Path
 
-from config import CORPUS_LIMIT, CORPUS_PATH, LANGS
+import requests
+from config import CORPUS_LIMIT, CORPUS_PATH, LANGS, STOPWORDS_PATH
 from datasets import load_dataset
+
 
 def fetch_corpus(lang: str, limit: int) -> list[str]:
     print(f"downloading wikipedia ({lang})...")
@@ -20,8 +23,9 @@ def fetch_corpus(lang: str, limit: int) -> list[str]:
                 lines.append(line.strip())
         if len(lines) >= CORPUS_LIMIT:
             break
-    print(f"Collected {len(lines)} lines for {lang}")
+    print(f"collected {len(lines)} wikipedia lines for {lang}")
     return lines
+
 
 def main():
     lines = []
@@ -29,11 +33,33 @@ def main():
         try:
             lines.extend(fetch_corpus(lang, CORPUS_LIMIT // len(LANGS)))
         except Exception as e:
-            print(f"Skipping {lang} due to error: {e}")
+            print(f"skipping wikipedia lines for {lang} due to error: {e}")
+
+        template = Path(str(STOPWORDS_PATH).format(lang=lang))
+        if template.exists():
+            stopwords = template.read_text().splitlines()
+            lines.extend(stopwords)
+            print(f"collected {len(stopwords)} stopwords for {lang}")
+        else:
+            try:
+                response = requests.get(
+                    f"https://raw.githubusercontent.com/stopwords-iso/stopwords-{lang}/refs/heads/master/stopwords-{lang}.txt"
+                )
+                response.raise_for_status()
+
+                stopwords = response.text.splitlines()
+                lines.extend(stopwords)
+                print(f"collected {len(stopwords)} stopwords for {lang}")
+
+                template.write_text(response.text)
+            except Exception as e:
+                print(f"skipping stopwords for {lang} due to error: {e}")
     random.shuffle(lines)
-    
+
     CORPUS_PATH.write_text("\n".join(lines[:CORPUS_LIMIT]), encoding="utf-8")
-    print(f"saved {len(lines[:CORPUS_LIMIT])} lines across {len(LANGS)} languages to {CORPUS_PATH}")
+    print(
+        f"saved {len(lines[:CORPUS_LIMIT])} lines across {len(LANGS)} languages to {CORPUS_PATH}"
+    )
 
 
 if __name__ == "__main__":

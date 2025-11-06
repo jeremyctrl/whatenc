@@ -7,7 +7,8 @@ MODEL_DIR = Path("models")
 for d in (MODEL_DIR, DATA_DIR):
     d.mkdir(exist_ok=True, parents=True)
 
-CORPUS_PATH = DATA_DIR / "wikipedia_corpus.txt"
+CORPUS_PATH = DATA_DIR / "corpus.txt"
+STOPWORDS_PATH = DATA_DIR / "stopwords_{lang}.txt"
 META_PATH = MODEL_DIR / "meta.json"
 CHECKPOINT_PATH = MODEL_DIR / "checkpoint.pt"
 MODEL_PATH = MODEL_DIR / "model.pt"
