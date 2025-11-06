@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 import onnxruntime as ort
-import torch
 
 MAX_LEN = 200
 
@@ -30,9 +29,9 @@ def encode_bigrams(text: str, stoi: dict):
 def predict(session, text: str, stoi: dict, idx2label: dict):
     x, l = encode_bigrams(text, stoi)  # noqa: E741
     outputs = session.run(None, {"input_text": x, "input_length": l})
-    logits = torch.tensor(outputs[0])
-    probs = torch.softmax(logits, dim=1).squeeze(0).numpy()
-
+    logits = np.array(outputs[0], dtype=np.float32)
+    exps = np.exp(logits - np.max(logits, axis=1, keepdims=True))
+    probs = (exps / np.sum(exps, axis=1, keepdims=True)).squeeze(0)
     top_indices = probs.argsort()[::-1][:3]
     return [(idx2label[str(i)], float(probs[i])) for i in top_indices]
 
