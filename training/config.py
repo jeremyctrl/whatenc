@@ -9,13 +9,14 @@ for d in (MODEL_DIR, DATA_DIR):
 
 CORPUS_PATH = DATA_DIR / "corpus.txt"
 STOPWORDS_PATH = DATA_DIR / "stopwords_{lang}.txt"
+NUMBERS_PATH = DATA_DIR / "numbers.txt"
 META_PATH = MODEL_DIR / "meta.json"
 CHECKPOINT_PATH = MODEL_DIR / "checkpoint.pt"
 MODEL_PATH = MODEL_DIR / "model.pt"
 ONNX_PATH = MODEL_DIR / "model.onnx"
 
 LANGS = ["en", "el", "ru", "he", "ar"]
-CORPUS_LIMIT = 10000
+CORPUS_LIMIT = 10500
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 

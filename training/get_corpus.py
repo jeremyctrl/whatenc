@@ -1,10 +1,12 @@
 import random
+import re
 from pathlib import Path
 
 import requests
-from config import CORPUS_LIMIT, CORPUS_PATH, LANGS, STOPWORDS_PATH
+from config import CORPUS_LIMIT, CORPUS_PATH, LANGS, STOPWORDS_PATH, NUMBERS_PATH
 from datasets import load_dataset
 
+HTML_TAGS = re.compile(r"<[^>]+>")
 
 def fetch_corpus(lang: str, limit: int) -> list[str]:
     print(f"downloading wikipedia ({lang})...")
@@ -54,6 +56,27 @@ def main():
                 template.write_text(response.text)
             except Exception as e:
                 print(f"skipping stopwords for {lang} due to error: {e}")
+    
+    if NUMBERS_PATH.exists():
+        numbers = NUMBERS_PATH.read_text().splitlines()
+        lines.extend(numbers)
+        print(f"collected {len(numbers)} numbers")
+    else:
+        numbers = []
+        for _ in range(40):
+            numbers.append(str(random.randint(10, 99)))
+        for _ in range(40):
+            numbers.append(str(random.randint(100, 999)))
+        for _ in range(40):
+            numbers.append(str(random.randint(1000, 9999)))
+        for _ in range(40):
+            numbers.append(str(random.randint(10000, 99999)))
+        lines.extend(numbers)
+        NUMBERS_PATH.write_text("\n".join(numbers))
+        print(f"collected {len(numbers)} numbers")
+
+    lines = [s for s in lines if not HTML_TAGS.search(s)]
+
     random.shuffle(lines)
 
     CORPUS_PATH.write_text("\n".join(lines[:CORPUS_LIMIT]), encoding="utf-8")
