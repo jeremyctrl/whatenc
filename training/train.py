@@ -32,11 +32,13 @@ class TextDataset(Dataset):
     def __getitem__(self, idx):
         text, label = self.samples[idx]
         tokens = encode_bigrams(text[:MAX_LEN], self.stoi)
+        true_len = min(len(tokens), MAX_LEN)
+
         x = torch.tensor(tokens[:MAX_LEN], dtype=torch.long)
         x = F.pad(x, (0, MAX_LEN - x.size(0)))
         y = torch.tensor(self.label2idx[label], dtype=torch.long)
-        return x, y
 
+        return x, torch.tensor(true_len, dtype=torch.float32), y
 
 class CNN(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_classes):
@@ -51,11 +53,13 @@ class CNN(nn.Module):
             nn.ReLU(),
             nn.AdaptiveMaxPool1d(1),
         )
-        self.fc = nn.Linear(96, num_classes)
+        self.fc = nn.Linear(96 + 1, num_classes)
 
-    def forward(self, x):
+    def forward(self, x, lengths):
         x = self.embedding(x).transpose(1, 2)
         x = self.conv(x).squeeze(-1)
+        l = (lengths / MAX_LEN).unsqueeze(1)  # noqa: E741
+        x = torch.cat([x, l], dim=1)
         return self.fc(x)
 
 
@@ -103,12 +107,12 @@ def main():
         model.train()
 
         total_loss = 0.0
-        for idx, (X, y) in enumerate(train_loader):
+        for idx, (X, L, y) in enumerate(train_loader):
             start = time.time()
-            X, y = X.to(DEVICE), y.to(DEVICE)
+            X, L, y = X.to(DEVICE), L.to(DEVICE), y.to(DEVICE)
 
             optimizer.zero_grad()
-            logits = model(X)
+            logits = model(X, L)
             loss = criterion(logits, y)
             loss.backward()
             optimizer.step()
@@ -128,9 +132,9 @@ def main():
     cm = torch.zeros(num_classes, num_classes, dtype=torch.int64)
 
     with torch.no_grad():
-        for X, y in test_loader:
-            X, y = X.to(DEVICE), y.to(DEVICE)
-            preds = model(X).argmax(dim=1)
+        for X, L, y in test_loader:
+            X, L, y = X.to(DEVICE), L.to(DEVICE), y.to(DEVICE)
+            preds = model(X, L).argmax(dim=1)
             for t, p in zip(y.view(-1), preds.view(-1)):
                 cm[t.long(), p.long()] += 1
 
